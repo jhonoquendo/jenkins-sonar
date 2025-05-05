@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         nodejs "NodeJs" // ← exacto al nombre que configuraste en Jenkins
+        sonarScanner 'SonarScanner'
     }
 
     environment {
@@ -23,12 +24,14 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            tools {
-                sonarScanner 'SonarScanner' // ← debe coincidir con el nombre configurado
-            }
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner -Dsonar.projectKey=jenkins-sonar -Dsonar.sources=. -Dsonar.login=$SONAR_TOKEN'
+                withSonarQubeEnv('SonarQube') { // Nombre del servidor en Jenkins
+                    sh '''
+                        sonar-scanner \
+                          -Dsonar.projectKey=jenkins-sonar \
+                          -Dsonar.sources=. \
+                          -Dsonar.login=${SONAR_TOKEN}
+                    '''
                 }
             }
         }
