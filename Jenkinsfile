@@ -22,13 +22,13 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+stage('SonarQube Analysis') {
+            tools {
+                sonarScanner 'SonarScanner' // ← debe coincidir con el nombre configurado
+            }
             steps {
-                withSonarQubeEnv('SonarQube') { // Nombre del servidor en Jenkins
-                    sh """
-                        sonar-scanner \
-                          -Dsonar.login=$SONAR_TOKEN
-                    """
+                withSonarQubeEnv('SonarQube') {
+                    sh 'sonar-scanner -Dsonar.projectKey=jenkins-sonar -Dsonar.sources=. -Dsonar.login=$SONAR_TOKEN'
                 }
             }
         }
