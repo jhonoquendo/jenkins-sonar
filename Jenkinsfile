@@ -19,6 +19,7 @@ pipeline {
         stage('Install') {
             steps {
                 sh 'npm install'
+                sh 'npm install -g sonar-scanner' 
             }
         }
 
