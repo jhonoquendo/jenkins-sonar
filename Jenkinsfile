@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         nodejs "NodeJs" // ← exacto al nombre que configuraste en Jenkins
-        sonarScanner 'SonarScanner'
     }
 
     environment {
