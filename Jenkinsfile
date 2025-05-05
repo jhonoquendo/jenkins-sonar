@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             tools {
                 sonarScanner 'SonarScanner' // ← debe coincidir con el nombre configurado
             }
