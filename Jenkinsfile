@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "Node 20" // ← exacto al nombre que configuraste en Jenkins
+    }
+
     environment {
         SONAR_TOKEN = credentials('sonarqube-token') // ID de la credencial en Jenkins
     }
