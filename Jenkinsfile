@@ -1,12 +1,22 @@
 pipeline {
-    agent any
-
-    tools {
-        nodejs "NodeJs" // ← exacto al nombre que configuraste en Jenkins
+    agent {
+        kubernetes {
+            yaml """
+                apiVersion: v1
+                kind: Pod
+                spec:
+                containers:
+                - name: sonar
+                    image: jhonoquendo/sonar-node:1.0
+                    command:
+                    - cat
+                    tty: true
+                """
+        }
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-token') // ID de la credencial en Jenkins
+        SONAR_TOKEN = credentials('token-sonar')
     }
 
     stages {
@@ -16,22 +26,25 @@ pipeline {
             }
         }
 
-        stage('Install') {
+        stage('Install Dependencies') {
             steps {
-                sh 'npm install'
-                sh 'npm install -g sonar-scanner' 
+                container('sonar') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Nombre del servidor en Jenkins
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=jenkins-sonar \
-                          -Dsonar.sources=. \
-                          -Dsonar.login=${SONAR_TOKEN}
-                    '''
+                container('sonar') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            sonar-scanner \
+                              -Dsonar.projectKey=jenkins-sonar \
+                              -Dsonar.sources=. \
+                              -Dsonar.login=${SONAR_TOKEN}
+                        '''
+                    }
                 }
             }
         }
